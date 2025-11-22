@@ -2,6 +2,8 @@ const token = localStorage.getItem('token');
 const privateKey = localStorage.getItem('privateKey');
 const statusText = document.getElementById('status-text');
 const sendForm = document.getElementById('send-form');
+const inboxList = document.getElementById('inbox-list');
+const refreshInboxButton = document.getElementById('refresh-inbox');
 
 if (!token) {
     alert('Anda belum login. Silakan login terlebih dahulu.');
@@ -49,6 +51,13 @@ function signCiphertext(ciphertext, senderPrivateKey) {
     const rsa = new JSEncrypt();
     rsa.setPrivateKey(senderPrivateKey);
     return rsa.sign(digest, CryptoJS.SHA256, 'sha256');
+}
+
+function verifySignature(ciphertext, signature, senderPublicKey) {
+    const digest = CryptoJS.SHA256(ciphertext).toString();
+    const rsa = new JSEncrypt();
+    rsa.setPublicKey(senderPublicKey);
+    return rsa.verify(digest, signature, CryptoJS.SHA256);
 }
 
 async function sendEncryptedMail(payload) {
@@ -122,4 +131,100 @@ if (sendForm) {
             setStatus(error.message || 'Terjadi kesalahan saat mengirim pesan.');
         }
     });
+}
+
+async function fetchInbox() {
+    if (!inboxList) return;
+    inboxList.innerHTML = '<p class="muted">Memuat inbox...</p>';
+
+    try {
+        const response = await fetch('../backend/inboxes.php', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || 'Gagal memuat inbox.');
+        }
+
+        const messages = result.messages || [];
+
+        if (!messages.length) {
+            inboxList.innerHTML = '<p class="muted">Belum ada pesan.</p>';
+            return;
+        }
+
+        inboxList.innerHTML = '';
+
+        messages.forEach((msg) => {
+            const item = document.createElement('div');
+            item.className = 'inbox-item';
+
+            // Verifikasi signature
+            const signatureValid = verifySignature(
+                msg.encrypted_message,
+                msg.signature,
+                msg.sender_public_key
+            );
+
+            // Dekripsi session key dengan private key penerima
+            const rsa = new JSEncrypt();
+            rsa.setPrivateKey(privateKey);
+            const sessionKey = rsa.decrypt(msg.encrypted_session_key);
+
+            let plaintext = '';
+            let decryptError = null;
+
+            if (!sessionKey) {
+                decryptError = 'Gagal mendekripsi session key.';
+            } else {
+                try {
+                    const bytes = CryptoJS.AES.decrypt(msg.encrypted_message, sessionKey);
+                    plaintext = bytes.toString(CryptoJS.enc.Utf8);
+                    if (!plaintext) {
+                        decryptError = 'Gagal mendekripsi pesan.';
+                    }
+                } catch (e) {
+                    decryptError = 'Gagal mendekripsi pesan.';
+                }
+            }
+
+            const signatureBadge = signatureValid
+                ? '<span class="badge">Signature OK</span>'
+                : '<span class="badge" style="background:#dc3545">Signature FAIL</span>';
+
+            const decryptBadge = !decryptError
+                ? '<span class="badge" style="background:#28a745">Decrypted</span>'
+                : '<span class="badge" style="background:#dc3545">Decrypt FAIL</span>';
+
+            item.innerHTML = `
+                <div>
+                    ${signatureBadge}
+                    ${decryptBadge}
+                </div>
+                <p><strong>Dari:</strong> ${msg.sender_username}</p>
+                <p class="muted">Ciphertext:</p>
+                <p class="cipher">${msg.encrypted_message}</p>
+                <p class="muted">Session Key (encrypted):</p>
+                <p class="cipher">${msg.encrypted_session_key}</p>
+                <p class="muted">Signature:</p>
+                <p class="cipher">${msg.signature}</p>
+                <p class="muted">Pesan Terdekripsi:</p>
+                <p class="plaintext">${decryptError ? decryptError : plaintext}</p>
+            `;
+
+            inboxList.appendChild(item);
+        });
+    } catch (error) {
+        inboxList.innerHTML = `<p class="muted">Error: ${error.message || 'Tidak dapat memuat inbox.'}</p>`;
+    }
+}
+
+if (refreshInboxButton) {
+    refreshInboxButton.addEventListener('click', fetchInbox);
+    // Muat awal
+    fetchInbox();
 }

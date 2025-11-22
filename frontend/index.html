@@ -11,17 +11,25 @@
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
 </head>
 <body>
-    <form id="send-form">
-        <h2>Kirim Pesan Terenkripsi</h2>
-        <label for="receiver">Username Penerima:</label>
-        <input type="text" id="receiver" name="receiver" required>
+    <main class="grid">
+        <form id="send-form">
+            <h2>Kirim Pesan Terenkripsi</h2>
+            <label for="receiver">Username Penerima:</label>
+            <input type="text" id="receiver" name="receiver" required>
 
-        <label for="message">Pesan:</label>
-        <textarea id="message" name="message" rows="6" required></textarea>
+            <label for="message">Pesan:</label>
+            <textarea id="message" name="message" rows="6" required></textarea>
 
-        <button type="submit" id="send-button">Kirim</button>
-        <p id="status-text"></p>
-    </form>
+            <button type="submit" id="send-button">Kirim</button>
+            <p id="status-text"></p>
+        </form>
+
+        <section id="inbox">
+            <h2>Inbox</h2>
+            <button id="refresh-inbox" type="button">Muat Inbox</button>
+            <div id="inbox-list"></div>
+        </section>
+    </main>
 
     <script src="js/dashboard.js"></script>
 </body>
