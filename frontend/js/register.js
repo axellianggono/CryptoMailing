@@ -42,7 +42,7 @@ async function registerUser() {
     }
 }
 
-registerButton.addEventListener('click', function(event) {
+registerButton.addEventListener('click', async function(event) {
     event.preventDefault();
-    registerUser();
+    await registerUser();
 });

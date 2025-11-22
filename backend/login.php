@@ -53,6 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         header('Content-Type: application/json');
         echo json_encode(["success" => true, "token" => $jwt]);
+
+        $stmt->close();
     } catch (Exception $e) {
         header('Content-Type: application/json');
         echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
@@ -61,3 +63,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Content-Type: application/json');
     echo json_encode(["success" => false, "message" => "Invalid request method."]);
 }
+
+$conn->close();

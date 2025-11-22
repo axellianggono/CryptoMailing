@@ -23,10 +23,12 @@ async function loginUser() {
     alert("Login successful!");
     localStorage.setItem("token", result["token"]);
     window.location.href = "index.html";
+  } else {
+    alert("Login failed: " + result["message"]);
   }
 }
 
-loginButton.addEventListener("click", function (event) {
+loginButton.addEventListener("click", async function (event) {
   event.preventDefault();
-  loginUser();
+  await loginUser();
 });
