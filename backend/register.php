@@ -25,8 +25,10 @@ function registerUser($username, $password, $publicKey) {
     $stmt->bind_param("sss", $username, $hashedPassword, $publicKey);
 
     if ($stmt->execute()) {
+        $stmt->close();
         return ["success" => true, "message" => "Registrasi berhasil."];
     } else {
+        $stmt->close();
         return ["success" => false, "message" => "Terjadi kesalahan saat registrasi."];
     }
 }
@@ -49,3 +51,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header('Content-Type: application/json');
     echo json_encode(["success" => false, "message" => "Invalid request method."]);
 }
+
+$conn->close();
