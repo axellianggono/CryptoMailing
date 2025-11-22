@@ -3,9 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Kirim Pesan</title>
+    <!-- Library RSA (JSEncrypt) -->
+    <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
+    <!-- Library AES dan SHA (CryptoJS) -->
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
 </head>
 <body>
+    <form id="send-form">
+        <h2>Kirim Pesan Terenkripsi</h2>
+        <label for="receiver">Username Penerima:</label>
+        <input type="text" id="receiver" name="receiver" required>
+
+        <label for="message">Pesan:</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+
+        <button type="submit" id="send-button">Kirim</button>
+        <p id="status-text"></p>
+    </form>
+
     <script src="js/dashboard.js"></script>
 </body>
 </html>

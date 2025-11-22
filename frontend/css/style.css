@@ -59,7 +59,8 @@ label {
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+textarea {
     display: block;
     width: 100%;
     padding: 0.375rem 0.75rem; /* Padding standar input Bootstrap */
@@ -74,12 +75,18 @@ input[type="password"] {
 }
 
 input[type="text"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+textarea:focus {
     color: var(--dark);
     background-color: #fff;
     border-color: #80bdff; /* Border fokus biru muda */
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Shadow fokus biru */
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
 }
 
 /* --- Gaya Tombol (Button Primary ala Bootstrap) --- */
@@ -109,4 +116,9 @@ button[type="submit"]:hover {
 
 button[type="submit"]:focus {
     box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Shadow fokus */
+}
+
+#status-text {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
 }
