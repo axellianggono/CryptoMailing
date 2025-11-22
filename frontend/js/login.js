@@ -26,7 +26,7 @@ async function loginUser() {
   }
 }
 
-loginButton.addEventListener("click", function (event) {
+loginButton.addEventListener("click", async function (event) {
   event.preventDefault();
-  loginUser();
+  await loginUser();
 });
