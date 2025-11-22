@@ -33,7 +33,7 @@ async function registerUser() {
 
     const result = await response.json();
 
-    if (response.body['success']) {
+    if (result['success']) {
         alert('Registration successful!');
         localStorage.setItem('privateKey', privateKey);
         window.location.href = 'login.html';
