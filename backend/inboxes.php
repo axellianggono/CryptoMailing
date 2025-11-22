@@ -39,15 +39,41 @@ if (!$receiverId) {
     exit;
 }
 
-// Ambil pesan yang diterima beserta username dan public key pengirim
-$stmt = $conn->prepare("
-    SELECT m.id, u.username AS sender_username, u.public_key AS sender_public_key, m.message, m.session_key, m.signature
-    FROM mails m
-    JOIN users u ON u.id = m.sender_id
-    WHERE m.receiver_id = ?
-    ORDER BY m.id DESC
-");
-$stmt->bind_param("i", $receiverId);
+$fetchAll = isset($_GET['all']) && $_GET['all'] === '1';
+
+// Ambil pesan. Jika all=1, ambil semua pesan di database (mis. untuk admin/cek data),
+// jika tidak, hanya pesan yang ditujukan ke user ini.
+if ($fetchAll) {
+    $stmt = $conn->prepare("
+        SELECT m.id,
+               sender.username AS sender_username,
+               sender.public_key AS sender_public_key,
+               receiver.username AS receiver_username,
+               m.message,
+               m.session_key,
+               m.signature
+        FROM mails m
+        JOIN users sender ON sender.id = m.sender_id
+        JOIN users receiver ON receiver.id = m.receiver_id
+        ORDER BY m.id DESC
+    ");
+} else {
+    $stmt = $conn->prepare("
+        SELECT m.id,
+               sender.username AS sender_username,
+               sender.public_key AS sender_public_key,
+               receiver.username AS receiver_username,
+               m.message,
+               m.session_key,
+               m.signature
+        FROM mails m
+        JOIN users sender ON sender.id = m.sender_id
+        JOIN users receiver ON receiver.id = m.receiver_id
+        WHERE m.receiver_id = ?
+        ORDER BY m.id DESC
+    ");
+    $stmt->bind_param("i", $receiverId);
+}
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -57,6 +83,7 @@ while ($row = $result->fetch_assoc()) {
         "id" => $row['id'],
         "sender_username" => $row['sender_username'],
         "sender_public_key" => $row['sender_public_key'],
+        "receiver_username" => $row['receiver_username'],
         "encrypted_message" => $row['message'],
         "encrypted_session_key" => $row['session_key'],
         "signature" => $row['signature']

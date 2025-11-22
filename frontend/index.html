@@ -26,7 +26,13 @@
 
         <section id="inbox">
             <h2>Inbox</h2>
-            <button id="refresh-inbox" type="button">Muat Inbox</button>
+            <div class="inbox-controls">
+                <label class="muted">
+                    <input type="checkbox" id="show-all">
+                    Tampilkan semua pesan (admin/debug)
+                </label>
+                <button id="refresh-inbox" type="button">Muat Inbox</button>
+            </div>
             <div id="inbox-list"></div>
         </section>
     </main>

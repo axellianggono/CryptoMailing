@@ -4,6 +4,7 @@ const statusText = document.getElementById('status-text');
 const sendForm = document.getElementById('send-form');
 const inboxList = document.getElementById('inbox-list');
 const refreshInboxButton = document.getElementById('refresh-inbox');
+const showAllCheckbox = document.getElementById('show-all');
 
 if (!token) {
     alert('Anda belum login. Silakan login terlebih dahulu.');
@@ -138,7 +139,8 @@ async function fetchInbox() {
     inboxList.innerHTML = '<p class="muted">Memuat inbox...</p>';
 
     try {
-        const response = await fetch('../backend/inboxes.php', {
+        const params = showAllCheckbox && showAllCheckbox.checked ? '?all=1' : '';
+        const response = await fetch(`../backend/inboxes.php${params}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -206,6 +208,7 @@ async function fetchInbox() {
                     ${decryptBadge}
                 </div>
                 <p><strong>Dari:</strong> ${msg.sender_username}</p>
+                <p class="muted">Untuk: ${msg.receiver_username}</p>
                 <p class="muted">Ciphertext:</p>
                 <p class="cipher">${msg.encrypted_message}</p>
                 <p class="muted">Session Key (encrypted):</p>
