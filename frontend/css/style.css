@@ -1,0 +1,112 @@
+/* File: css/style.css */
+
+/* --- Variabel CSS untuk Warna dan Ukuran (Meniru Bootstrap) --- */
+:root {
+    --primary: #007bff; /* Biru Primer Bootstrap */
+    --secondary: #6c757d; /* Abu-abu Sekunder */
+    --success: #28a745; /* Hijau Sukses */
+    --danger: #dc3545; /* Merah Bahaya */
+    --light: #f8f9fa; /* Latar Belakang Terang */
+    --dark: #343a40; /* Teks Gelap */
+    --border-color: #ced4da; /* Warna Border Input */
+    --spacing-unit: 1rem; /* Unit Spasi Dasar */
+}
+
+/* --- Pengaturan Global (Box-sizing Bootstrap) --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--dark);
+    background-color: var(--light);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Memastikan formulir berada di tengah vertikal */
+}
+
+/* --- Gaya Formulir (Container ala Bootstrap) --- */
+form {
+    width: 100%;
+    max-width: 400px; /* Lebar maksimum standar */
+    padding: calc(var(--spacing-unit) * 1.5);
+    margin: var(--spacing-unit);
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.125); /* Border card */
+    border-radius: 0.25rem; /* Sudut membulat */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Shadow ringan */
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-unit);
+    font-size: 1.5rem;
+    font-weight: 300; /* Font tipis ala Jumbotron/Heading Bootstrap */
+    color: var(--dark);
+    text-align: center;
+}
+
+/* --- Gaya Input dan Label (Form Control ala Bootstrap) --- */
+label {
+    display: block; /* Agar label berada di atas input */
+    margin-bottom: 0.25rem;
+    font-weight: 600; /* Lebih tebal sedikit */
+}
+
+input[type="text"],
+input[type="password"] {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem; /* Padding standar input Bootstrap */
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--dark);
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    color: var(--dark);
+    background-color: #fff;
+    border-color: #80bdff; /* Border fokus biru muda */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Shadow fokus biru */
+}
+
+/* --- Gaya Tombol (Button Primary ala Bootstrap) --- */
+button[type="submit"] {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff; /* Teks putih */
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    background-color: var(--primary); /* Warna Biru Primer */
+    border: 1px solid var(--primary);
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    width: 100%; /* Membuat tombol penuh lebar */
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    color: #fff;
+    background-color: #0056b3; /* Biru sedikit lebih gelap saat hover */
+    border-color: #0056b3;
+}
+
+button[type="submit"]:focus {
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Shadow fokus */
+}
