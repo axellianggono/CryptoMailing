@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Mail Auth - Inbox</title>
+  <title>Mail Auth - Detail</title>
 
   <link href="css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900" rel="stylesheet">
@@ -24,7 +24,7 @@
 
       <hr class="sidebar-divider my-0">
 
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="index.html">
           <i class="fas fa-fw fa-inbox"></i>
           <span>Inbox</span>
@@ -83,23 +83,26 @@
 
         <div class="container-fluid">
           <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Inbox</h1>
-            <button class="btn btn-primary btn-sm shadow-sm" id="refresh-inbox">
-              <i class="fas fa-sync-alt fa-sm text-white-50"></i> Muat Inbox
-            </button>
+            <h1 class="h3 mb-0 text-gray-800">Detail Pesan</h1>
+            <a href="index.html" class="btn btn-secondary btn-sm">
+              <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali ke Inbox
+            </a>
           </div>
 
           <div class="row">
-            <div class="col-lg-12 mb-4">
-              <div class="card shadow">
+            <div class="col-lg-10">
+              <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Pesan Masuk</h6>
-                  <span class="badge badge-primary" id="inbox-count">0</span>
-                </div>
-                <div class="list-group list-group-flush" id="inbox-list">
-                  <div class="list-group-item text-center text-muted small">
-                    Loading...
+                  <h6 class="m-0 font-weight-bold text-primary">Pesan</h6>
+                  <div>
+                    <span class="badge badge-success d-none" id="badge-signature">Signature OK</span>
+                    <span class="badge badge-danger d-none" id="badge-signature-fail">Signature FAIL</span>
+                    <span class="badge badge-success d-none" id="badge-decrypt">Decrypted</span>
+                    <span class="badge badge-danger d-none" id="badge-decrypt-fail">Decrypt FAIL</span>
                   </div>
+                </div>
+                <div class="card-body" id="message-body">
+                  <p class="text-muted mb-0">Loading...</p>
                 </div>
               </div>
             </div>
@@ -129,7 +132,7 @@
   <script src="js/auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
-  <script src="js/inbox.js"></script>
+  <script src="js/message.js"></script>
 </body>
 
 </html>

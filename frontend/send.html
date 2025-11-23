@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Mail Auth - Inbox</title>
+  <title>Mail Auth - Send</title>
 
   <link href="css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900" rel="stylesheet">
@@ -24,14 +24,14 @@
 
       <hr class="sidebar-divider my-0">
 
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="index.html">
           <i class="fas fa-fw fa-inbox"></i>
           <span>Inbox</span>
         </a>
       </li>
 
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" href="send.html">
           <i class="fas fa-fw fa-paper-plane"></i>
           <span>Send</span>
@@ -83,23 +83,33 @@
 
         <div class="container-fluid">
           <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Inbox</h1>
-            <button class="btn btn-primary btn-sm shadow-sm" id="refresh-inbox">
-              <i class="fas fa-sync-alt fa-sm text-white-50"></i> Muat Inbox
-            </button>
+            <h1 class="h3 mb-0 text-gray-800">Kirim Pesan</h1>
           </div>
 
           <div class="row">
-            <div class="col-lg-12 mb-4">
-              <div class="card shadow">
+            <div class="col-lg-8">
+              <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Pesan Masuk</h6>
-                  <span class="badge badge-primary" id="inbox-count">0</span>
+                  <h6 class="m-0 font-weight-bold text-primary">Compose</h6>
+                  <span class="badge badge-info">Encrypted</span>
                 </div>
-                <div class="list-group list-group-flush" id="inbox-list">
-                  <div class="list-group-item text-center text-muted small">
-                    Loading...
-                  </div>
+                <div class="card-body">
+                  <form id="send-form">
+                    <div class="form-group">
+                      <label for="receiver">Username Penerima</label>
+                      <input type="text" class="form-control" id="receiver" list="users-list" required placeholder="mis. johndoe">
+                      <datalist id="users-list"></datalist>
+                    </div>
+                    <div class="form-group">
+                      <label for="message">Pesan</label>
+                      <textarea class="form-control" id="message" rows="6" required
+                        placeholder="Tuliskan pesan yang akan dienkripsi"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" id="send-button">
+                      <i class="fas fa-paper-plane fa-sm text-white-50"></i> Kirim
+                    </button>
+                    <div class="mt-2 small" id="status-text"></div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -129,7 +139,7 @@
   <script src="js/auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
-  <script src="js/inbox.js"></script>
+  <script src="js/send.js"></script>
 </body>
 
 </html>

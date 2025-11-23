@@ -1,25 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Library RSA (JSEncrypt) -->
-    <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
-
-    <!-- Library AES (CryptoJS) -->
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
-    <title>Register</title>
+    <title>Mail Auth - Register</title>
+    <link href="css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
-<body>
-    <form action="../backend/register.php" method="POST">
-        <h2>Register</h2>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="submit" id="register-button">Register</button>
-    </form>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">Daftar Akun Baru</h1>
+                            </div>
+                            <form class="user" method="POST">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-user" id="username" name="username"
+                                        placeholder="Username" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control form-control-user" id="password" name="password"
+                                        placeholder="Password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-user btn-block" id="register-button">
+                                    Register
+                                </button>
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" href="login.html">Sudah punya akun? Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center text-white-50 small mb-3">
+                    &copy; KriptoWijaya
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/template/jquery.min.js"></script>
+    <script src="js/template/bootstrap.bundle.min.js"></script>
+    <script src="js/template/jquery.easing.min.js"></script>
+    <script src="js/template/sb-admin-2.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
     <script src="js/register.js"></script>
 </body>
+
 </html>
