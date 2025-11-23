@@ -94,7 +94,7 @@
             <small class="text-muted">ID: ${msg.id}</small>
           </div>
           <p class="mb-1 small text-muted">
-            Dari: ${msg.sender_username} | Untuk: ${msg.receiver_username}
+            ${msg.sender_username} &#8594; ${msg.receiver_username}
           </p>
           <div class="small">
             ${signatureValid ? '<span class="badge badge-success">Signature OK</span>' : '<span class="badge badge-danger">Signature FAIL</span>'}
