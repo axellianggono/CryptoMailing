@@ -1,13 +1,18 @@
 # KriptoWijaya - Encrypted Mail Demo
 
-Proyek ini contoh alur kirim/terima pesan terenkripsi (AES + RSA + tanda tangan SHA-256) dengan autentikasi JWT.
+Proyek ini mencontohkan alur kirim/terima pesan terenkripsi (AES + RSA + tanda tangan SHA-256) dengan autentikasi JWT.
 
 ## Persiapan
-- Salin folder proyek ke `XAMPP/htdocs`.
-- Jalankan Apache & MySQL dari XAMPP.
-- Di root proyek jalankan: `composer install`.
-- Buat database dan tabel via `database.sql` (import dengan phpMyAdmin atau `mysql`).
-- Buat file `.env` berisi `APP_KEY=<isi key HS256>`. Gunakan nilai dari generator https://www.strongdm.com/tools/api-key-generator (copy string ke APP_KEY).
+1) Salin folder proyek ke `XAMPP/htdocs`.
+2) Jalankan Apache & MySQL dari XAMPP.
+3) Instal dependency PHP:
+   ```bash
+   composer install
+   ```
+4) Buat database dan tabel:
+   - Import `db_setup.txt` (atau `database.sql`) via phpMyAdmin / mysql CLI untuk membuat DB `kriptowijaya` beserta tabel `users` & `mails`.
+5) Buat file `.env` di root:
+   - Isi `APP_KEY=<isi key HS256>`, gunakan generator https://www.strongdm.com/tools/api-key-generator, lalu copy string ke APP_KEY.
 
 Contoh `.env`:
 ```
