@@ -7,6 +7,11 @@
   const badgeSigFail = document.getElementById('badge-signature-fail');
   const badgeDecOk = document.getElementById('badge-decrypt');
   const badgeDecFail = document.getElementById('badge-decrypt-fail');
+  const messageInfoToggle = document.getElementById('message-info');
+  const messageInfoDetail = document.getElementById('message-info-detail');
+  const encryptedMessageElem = document.getElementById('encrypted-message');
+  const encryptedSessionElem = document.getElementById('encrypted-session');
+  const messageSignatureElem = document.getElementById('message-signature');
 
   if (!authToken) {
     alert('Anda belum login. Silakan login terlebih dahulu.');
@@ -76,6 +81,12 @@
       }
 
       const msg = result.message;
+
+      // Tampilkan detail pesan terenkripsi
+      encryptedMessageElem.textContent = `${msg.encrypted_message}`;
+      encryptedSessionElem.textContent = `${msg.encrypted_session_key}`;
+      messageSignatureElem.textContent = `${msg.signature}`;
+
       const signatureValid = verifySignature(msg.encrypted_message, msg.signature, msg.sender_public_key);
       const { plaintext, error } = decryptPayload(msg.encrypted_session_key, msg.encrypted_message);
 
@@ -96,4 +107,14 @@
   }
 
   fetchMessage();
+
+  if (messageInfoToggle && messageInfoDetail) {
+    messageInfoToggle.addEventListener('click', () => {
+      if (messageInfoDetail.style.display === 'none' || !messageInfoDetail.style.display) {
+        messageInfoDetail.style.display = 'block';
+      } else {
+        messageInfoDetail.style.display = 'none';
+      }
+    });
+  }
 })();

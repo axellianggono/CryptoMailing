@@ -99,7 +99,16 @@
                     <span class="badge badge-danger d-none" id="badge-signature-fail">Signature FAIL</span>
                     <span class="badge badge-success d-none" id="badge-decrypt">Decrypted</span>
                     <span class="badge badge-danger d-none" id="badge-decrypt-fail">Decrypt FAIL</span>
+                    <button class="btn btn-sm btn-info" id="message-info">&#9432; Message Info</button>
                   </div>
+                </div>
+                <div class="card-body" id="message-info-detail" style="display: none;">
+                  <span class="badge badge-info">Encrypted Message</span>
+                  <p id="encrypted-message">-</p>
+                  <span class="badge badge-info">Encrypted Session Key</span>
+                  <p id="encrypted-session">-</p>
+                  <span class="badge badge-info">Message Signature</span>
+                  <p id="message-signature">-</p>
                 </div>
                 <div class="card-body" id="message-body">
                   <p class="text-muted mb-0">Loading...</p>
