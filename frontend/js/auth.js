@@ -45,7 +45,6 @@ function parseJwt(tokenValue) {
     logoutBtn.addEventListener('click', (e) => {
       e.preventDefault();
       localStorage.removeItem('token');
-      localStorage.removeItem('privateKey');
       window.location.href = 'login.html';
     });
   }
