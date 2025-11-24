@@ -11,11 +11,11 @@
     return;
   }
 
-  const verifySignature = (ciphertext, signature, senderPublicKey) => {
-    const digest = CryptoJS.SHA256(ciphertext).toString();
+  const verifySignature = (plaintext, signature, senderPublicKey) => {
+    const digest = CryptoJS.SHA256(plaintext).toString();
     const rsa = new JSEncrypt();
     rsa.setPublicKey(senderPublicKey);
-    return rsa.verify(digest, signature, CryptoJS.SHA256);
+    return rsa.verify(digest, signature, CryptoJS.SHA256, 'sha256');
   };
 
   const decryptPayload = (encryptedSessionKey, encryptedMessage) => {
@@ -80,8 +80,8 @@
 
       inboxList.innerHTML = '';
       messages.forEach((msg) => {
-        const signatureValid = verifySignature(msg.encrypted_message, msg.signature, msg.sender_public_key);
         const { plaintext, error } = decryptPayload(msg.encrypted_session_key, msg.encrypted_message);
+        const signatureValid = !error ? verifySignature(plaintext, msg.signature, msg.sender_public_key) : false;
         const detailLink = `message.html?id=${encodeURIComponent(msg.id)}`;
 
         const item = document.createElement('a');

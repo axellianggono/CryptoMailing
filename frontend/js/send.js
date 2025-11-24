@@ -46,8 +46,8 @@
     return rsa.encrypt(sessionKey);
   }
 
-  function signCiphertext(ciphertext, senderPrivateKey) {
-    const digest = CryptoJS.SHA256(ciphertext).toString();
+  function signMessage(message, senderPrivateKey) {
+    const digest = CryptoJS.SHA256(message).toString();
     const rsa = new JSEncrypt();
     rsa.setPrivateKey(senderPrivateKey);
     return rsa.sign(digest, CryptoJS.SHA256, 'sha256');
@@ -195,7 +195,7 @@
         const sessionKey = generateSessionKey();
         const encryptedMessage = encryptMessage(message, sessionKey);
         const encryptedSessionKey = encryptSessionKey(sessionKey, receiverPublicKey);
-        const signature = signCiphertext(encryptedMessage, userPrivateKey);
+        const signature = signMessage(message, userPrivateKey);
 
         if (!encryptedSessionKey) {
           throw new Error('Gagal mengenkripsi session key dengan RSA.');

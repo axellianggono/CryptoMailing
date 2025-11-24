@@ -24,8 +24,8 @@
     return url.searchParams.get(name);
   }
 
-  const verifySignature = (ciphertext, signature, senderPublicKey) => {
-    const digest = CryptoJS.SHA256(ciphertext).toString();
+  const verifySignature = (plaintext, signature, senderPublicKey) => {
+    const digest = CryptoJS.SHA256(plaintext).toString();
     const rsa = new JSEncrypt();
     rsa.setPublicKey(senderPublicKey);
     return rsa.verify(digest, signature, CryptoJS.SHA256);
@@ -87,8 +87,8 @@
       encryptedSessionElem.textContent = `${msg.encrypted_session_key}`;
       messageSignatureElem.textContent = `${msg.signature}`;
 
-      const signatureValid = verifySignature(msg.encrypted_message, msg.signature, msg.sender_public_key);
       const { plaintext, error } = decryptPayload(msg.encrypted_session_key, msg.encrypted_message);
+      const signatureValid = !error ? verifySignature(plaintext, msg.signature, msg.sender_public_key) : false;
 
       if (badgeSigOk && signatureValid) badgeSigOk.classList.remove('d-none');
       if (badgeSigFail && !signatureValid) badgeSigFail.classList.remove('d-none');
