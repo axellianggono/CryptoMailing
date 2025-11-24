@@ -4,7 +4,7 @@
   const statusText = document.getElementById('status-text');
   const sendForm = document.getElementById('send-form');
   const receiverInput = document.getElementById('receiver');
-  const usersList = document.getElementById('users-list');
+  const suggestionBox = document.getElementById('user-suggestions');
 
   if (!authToken) {
     alert('Anda belum login. Silakan login terlebih dahulu.');
@@ -74,24 +74,59 @@
     };
   };
 
+  const clearSuggestions = () => {
+    if (!suggestionBox) return;
+    suggestionBox.innerHTML = '';
+    suggestionBox.classList.remove('show');
+  };
+
+  const renderSuggestions = (users) => {
+    if (!suggestionBox) return;
+    if (!users.length) {
+      if (suggestionBox) {
+        suggestionBox.innerHTML = '<div class="list-group-item text-muted small">Tidak ada user ditemukan.</div>';
+        suggestionBox.classList.add('show');
+      }
+      return;
+    }
+
+    suggestionBox.innerHTML = users
+      .map(
+        (u) =>
+          `<button type="button" class="list-group-item list-group-item-action suggestion-item" data-username="${u}">${u}</button>`
+      )
+      .join('');
+    suggestionBox.classList.add('show');
+  };
+
+  const showLoadingSuggestions = () => {
+    if (!suggestionBox) return;
+    suggestionBox.innerHTML = '<div class="list-group-item text-muted small">Mencari...</div>';
+    suggestionBox.classList.add('show');
+  };
+
   async function searchUsers(term) {
     if (!term) {
-      if (usersList) usersList.innerHTML = '';
+      clearSuggestions();
       return;
     }
 
     try {
+      showLoadingSuggestions();
       const response = await fetch(`../backend/users.php?q=${encodeURIComponent(term)}`, {
         headers: {
           Authorization: `Bearer ${authToken}`
         }
       });
       const result = await response.json();
-      if (result.success && Array.isArray(result.users) && usersList) {
-        usersList.innerHTML = result.users.map((u) => `<option value="${u}"></option>`).join('');
+      if (result.success && Array.isArray(result.users)) {
+        renderSuggestions(result.users);
+      } else {
+        clearSuggestions();
       }
     } catch (e) {
       // abaikan error autocomplete agar form tetap bisa dipakai
+      clearSuggestions();
     }
   }
 
@@ -101,6 +136,33 @@
     receiverInput.addEventListener('input', (e) => {
       const term = e.target.value.trim();
       handleSearchUsers(term);
+    });
+
+    receiverInput.addEventListener('focus', () => {
+      const term = receiverInput.value.trim();
+      handleSearchUsers(term);
+    });
+
+    receiverInput.addEventListener('blur', () => {
+      // beri sedikit delay agar klik pada suggestion tetap terdaftar
+      setTimeout(clearSuggestions, 1);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (suggestionBox && !suggestionBox.contains(e.target) && e.target !== receiverInput) {
+        clearSuggestions();
+      }
+    });
+  }
+
+  if (suggestionBox) {
+    suggestionBox.addEventListener('click', (e) => {
+      const target = e.target.closest('.suggestion-item');
+      if (target && receiverInput) {
+        receiverInput.value = target.dataset.username || '';
+        clearSuggestions();
+        receiverInput.focus();
+      }
     });
   }
 
