@@ -156,10 +156,20 @@
   }
 
   if (suggestionBox) {
+    suggestionBox.addEventListener('mousedown', (e) => {
+      const target = e.target.closest('.suggestion-item');
+      if (target && receiverInput) {
+        receiverInput.value = target.dataset.username || target.textContent.trim();
+        clearSuggestions();
+        // cegah blur sebelum klik selesai
+        e.preventDefault();
+      }
+    });
+
     suggestionBox.addEventListener('click', (e) => {
       const target = e.target.closest('.suggestion-item');
       if (target && receiverInput) {
-        receiverInput.value = target.dataset.username || '';
+        receiverInput.value = target.dataset.username || target.textContent.trim();
         clearSuggestions();
         receiverInput.focus();
       }
