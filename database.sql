@@ -33,6 +33,7 @@ CREATE TABLE `mails` (
   `receiver_id` int(10) UNSIGNED NOT NULL,
   `message` text NOT NULL,
   `session_key` text NOT NULL,
+  `attachment` longtext DEFAULT NULL,
   `signature` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

@@ -46,11 +46,30 @@
     return rsa.encrypt(sessionKey);
   }
 
-  function signMessage(message, senderPrivateKey) {
-    const digest = CryptoJS.SHA256(message).toString();
+  function signMessage(message, attachmentBase64, senderPrivateKey) {
+    const combined = `${message}||${attachmentBase64 || ''}`;
     const rsa = new JSEncrypt();
     rsa.setPrivateKey(senderPrivateKey);
-    return rsa.sign(digest, CryptoJS.SHA256, 'sha256');
+    return rsa.sign(combined, CryptoJS.SHA256, 'sha256');
+  }
+
+  function encryptAttachment(base64Data, sessionKey) {
+    if (!base64Data) return '';
+    return CryptoJS.AES.encrypt(base64Data, sessionKey).toString();
+  }
+
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        // result in data:*;base64,xxx
+        const base64 = typeof result === 'string' ? result.split(',')[1] : '';
+        resolve(base64 || '');
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   async function sendEncryptedMail(payload) {
@@ -182,6 +201,7 @@
 
       const receiverUsername = document.getElementById('receiver').value.trim();
       const message = document.getElementById('message').value;
+      const attachmentFile = document.getElementById('attachment')?.files?.[0] || null;
 
       if (!receiverUsername || !message) {
         setStatus('Username penerima dan pesan wajib diisi.');
@@ -194,6 +214,12 @@
       }
 
       try {
+        let attachmentBase64 = '';
+        if (attachmentFile) {
+          setStatus('Membaca lampiran...');
+          attachmentBase64 = await readFileAsBase64(attachmentFile);
+        }
+
         setStatus('Mengambil public key penerima...');
         const publicKeyResponse = await fetchReceiverPublicKey(receiverUsername);
         if (!publicKeyResponse.success) {
@@ -205,7 +231,8 @@
         const sessionKey = generateSessionKey();
         const encryptedMessage = encryptMessage(message, sessionKey);
         const encryptedSessionKey = encryptSessionKey(sessionKey, receiverPublicKey);
-        const signature = signMessage(message, userPrivateKey);
+        const encryptedAttachment = encryptAttachment(attachmentBase64, sessionKey);
+        const signature = signMessage(message, attachmentBase64, userPrivateKey);
 
         if (!encryptedSessionKey) {
           throw new Error('Gagal mengenkripsi session key dengan RSA.');
@@ -220,6 +247,7 @@
           receiver_username: receiverUsername,
           encrypted_message: encryptedMessage,
           encrypted_session_key: encryptedSessionKey,
+          encrypted_attachment: encryptedAttachment,
           signature: signature
         };
 
@@ -230,6 +258,7 @@
 
         setStatus('Pesan terenkripsi berhasil dikirim!', true);
         sendForm.reset();
+        clearSuggestions();
       } catch (error) {
         setStatus(error.message || 'Terjadi kesalahan saat mengirim pesan.');
       }

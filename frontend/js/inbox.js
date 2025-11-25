@@ -11,16 +11,15 @@
     return;
   }
 
-  const verifySignature = (plaintext, signature, senderPublicKey) => {
-    const digest = CryptoJS.SHA256(plaintext).toString();
+  const verifySignature = (combined, signature, senderPublicKey) => {
     const rsa = new JSEncrypt();
     rsa.setPublicKey(senderPublicKey);
-    return rsa.verify(digest, signature, CryptoJS.SHA256, 'sha256');
+    return rsa.verify(combined, signature, CryptoJS.SHA256);
   };
 
-  const decryptPayload = (encryptedSessionKey, encryptedMessage) => {
+  const decryptPayload = (encryptedSessionKey, encryptedMessage, encryptedAttachment) => {
     if (!userPrivateKey) {
-      return { plaintext: '', error: 'Kunci privat tidak ditemukan di perangkat ini.' };
+      return { plaintext: '', attachment: '', error: 'Kunci privat tidak ditemukan di perangkat ini.' };
     }
 
     const rsa = new JSEncrypt();
@@ -28,18 +27,27 @@
     const sessionKey = rsa.decrypt(encryptedSessionKey);
 
     if (!sessionKey) {
-      return { plaintext: '', error: 'Gagal mendekripsi session key.' };
+      return { plaintext: '', attachment: '', error: 'Gagal mendekripsi session key.' };
     }
 
     try {
       const bytes = CryptoJS.AES.decrypt(encryptedMessage, sessionKey);
       const plaintext = bytes.toString(CryptoJS.enc.Utf8);
       if (!plaintext) {
-        return { plaintext: '', error: 'Gagal mendekripsi pesan.' };
+        return { plaintext: '', attachment: '', error: 'Gagal mendekripsi pesan.' };
       }
-      return { plaintext };
+      let attachment = '';
+      if (encryptedAttachment) {
+        try {
+          const attachBytes = CryptoJS.AES.decrypt(encryptedAttachment, sessionKey);
+          attachment = attachBytes.toString(CryptoJS.enc.Utf8);
+        } catch (e) {
+          attachment = '';
+        }
+      }
+      return { plaintext, attachment };
     } catch (e) {
-      return { plaintext: '', error: 'Gagal mendekripsi pesan.' };
+      return { plaintext: '', attachment: '', error: 'Gagal mendekripsi pesan.' };
     }
   };
 
@@ -80,8 +88,14 @@
 
       inboxList.innerHTML = '';
       messages.forEach((msg) => {
-        const { plaintext, error } = decryptPayload(msg.encrypted_session_key, msg.encrypted_message);
-        const signatureValid = !error ? verifySignature(plaintext, msg.signature, msg.sender_public_key) : false;
+        const { plaintext, attachment, error } = decryptPayload(
+          msg.encrypted_session_key,
+          msg.encrypted_message,
+          msg.encrypted_attachment
+        );
+        const signatureValid = !error
+          ? verifySignature(`${plaintext}||${attachment || ''}`, msg.signature, msg.sender_public_key)
+          : false;
         const detailLink = `message.html?id=${encodeURIComponent(msg.id)}`;
 
         const item = document.createElement('a');

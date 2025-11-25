@@ -45,13 +45,14 @@ $fetchAll = isset($_GET['all']) && $_GET['all'] === '1';
 // jika tidak, hanya pesan yang ditujukan ke user ini.
 if ($fetchAll) {
     $stmt = $conn->prepare("
-        SELECT m.id,
-               sender.username AS sender_username,
-               sender.public_key AS sender_public_key,
-               receiver.username AS receiver_username,
-               m.message,
-               m.session_key,
-               m.signature
+    SELECT m.id,
+           sender.username AS sender_username,
+           sender.public_key AS sender_public_key,
+           receiver.username AS receiver_username,
+           m.message,
+           m.session_key,
+           m.attachment,
+           m.signature
         FROM mails m
         JOIN users sender ON sender.id = m.sender_id
         JOIN users receiver ON receiver.id = m.receiver_id
@@ -59,13 +60,14 @@ if ($fetchAll) {
     ");
 } else {
     $stmt = $conn->prepare("
-        SELECT m.id,
-               sender.username AS sender_username,
-               sender.public_key AS sender_public_key,
-               receiver.username AS receiver_username,
-               m.message,
-               m.session_key,
-               m.signature
+    SELECT m.id,
+           sender.username AS sender_username,
+           sender.public_key AS sender_public_key,
+           receiver.username AS receiver_username,
+           m.message,
+           m.session_key,
+           m.attachment,
+           m.signature
         FROM mails m
         JOIN users sender ON sender.id = m.sender_id
         JOIN users receiver ON receiver.id = m.receiver_id
@@ -86,6 +88,7 @@ while ($row = $result->fetch_assoc()) {
         "receiver_username" => $row['receiver_username'],
         "encrypted_message" => $row['message'],
         "encrypted_session_key" => $row['session_key'],
+        "encrypted_attachment" => $row['attachment'],
         "signature" => $row['signature']
     ];
 }

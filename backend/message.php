@@ -54,6 +54,7 @@ if ($fetchAll) {
                receiver.username AS receiver_username,
                m.message,
                m.session_key,
+               m.attachment,
                m.signature,
                m.receiver_id
         FROM mails m
@@ -71,6 +72,7 @@ if ($fetchAll) {
                receiver.username AS receiver_username,
                m.message,
                m.session_key,
+               m.attachment,
                m.signature,
                m.receiver_id
         FROM mails m
@@ -101,6 +103,7 @@ echo json_encode([
         "receiver_username" => $message['receiver_username'],
         "encrypted_message" => $message['message'],
         "encrypted_session_key" => $message['session_key'],
+        "encrypted_attachment" => $message['attachment'],
         "signature" => $message['signature']
     ]
 ]);

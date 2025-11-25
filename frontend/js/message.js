@@ -24,16 +24,15 @@
     return url.searchParams.get(name);
   }
 
-  const verifySignature = (plaintext, signature, senderPublicKey) => {
-    const digest = CryptoJS.SHA256(plaintext).toString();
+  const verifySignature = (combined, signature, senderPublicKey) => {
     const rsa = new JSEncrypt();
     rsa.setPublicKey(senderPublicKey);
-    return rsa.verify(digest, signature, CryptoJS.SHA256);
+    return rsa.verify(combined, signature, CryptoJS.SHA256);
   };
 
-  const decryptPayload = (encryptedSessionKey, encryptedMessage) => {
+  const decryptPayload = (encryptedSessionKey, encryptedMessage, encryptedAttachment) => {
     if (!userPrivateKey) {
-      return { plaintext: '', error: 'Kunci privat tidak ditemukan di perangkat ini.' };
+      return { plaintext: '', attachment: '', error: 'Kunci privat tidak ditemukan di perangkat ini.' };
     }
 
     const rsa = new JSEncrypt();
@@ -41,18 +40,27 @@
     const sessionKey = rsa.decrypt(encryptedSessionKey);
 
     if (!sessionKey) {
-      return { plaintext: '', error: 'Gagal mendekripsi session key.' };
+      return { plaintext: '', attachment: '', error: 'Gagal mendekripsi session key.' };
     }
 
     try {
       const bytes = CryptoJS.AES.decrypt(encryptedMessage, sessionKey);
       const plaintext = bytes.toString(CryptoJS.enc.Utf8);
       if (!plaintext) {
-        return { plaintext: '', error: 'Gagal mendekripsi pesan.' };
+        return { plaintext: '', attachment: '', error: 'Gagal mendekripsi pesan.' };
       }
-      return { plaintext };
+      let attachment = '';
+      if (encryptedAttachment) {
+        try {
+          const attachBytes = CryptoJS.AES.decrypt(encryptedAttachment, sessionKey);
+          attachment = attachBytes.toString(CryptoJS.enc.Utf8);
+        } catch (e) {
+          attachment = '';
+        }
+      }
+      return { plaintext, attachment };
     } catch (e) {
-      return { plaintext: '', error: 'Gagal mendekripsi pesan.' };
+      return { plaintext: '', attachment: '', error: 'Gagal mendekripsi pesan.' };
     }
   };
 
@@ -87,8 +95,13 @@
       encryptedSessionElem.textContent = `${msg.encrypted_session_key}`;
       messageSignatureElem.textContent = `${msg.signature}`;
 
-      const { plaintext, error } = decryptPayload(msg.encrypted_session_key, msg.encrypted_message);
-      const signatureValid = !error ? verifySignature(plaintext, msg.signature, msg.sender_public_key) : false;
+      const { plaintext, attachment, error } = decryptPayload(
+        msg.encrypted_session_key,
+        msg.encrypted_message,
+        msg.encrypted_attachment
+      );
+      const signaturePayload = `${plaintext}||${attachment || ''}`;
+      const signatureValid = !error ? verifySignature(signaturePayload, msg.signature, msg.sender_public_key) : false;
 
       if (badgeSigOk && signatureValid) badgeSigOk.classList.remove('d-none');
       if (badgeSigFail && !signatureValid) badgeSigFail.classList.remove('d-none');
@@ -99,7 +112,16 @@
         <p><strong>Pengirim:</strong> ${msg.sender_username}</p>
         <p><strong>Penerima:</strong> ${msg.receiver_username}</p>
         <p class="text-muted small mb-1">Pesan Terdekripsi:</p>
-        <div class="p-3 bg-white border rounded" style="white-space: pre-wrap;">${error ? error : plaintext}</div>
+        <div class="p-3 bg-white border rounded mb-3" style="white-space: pre-wrap;">${error ? error : plaintext}</div>
+        ${
+          attachment && !error
+            ? `<div class="mb-2"><strong>Lampiran:</strong></div>
+               <div class="p-2 bg-white border rounded">
+                 <img src="data:image/*;base64,${attachment}" alt="Lampiran" style="max-width:100%; height:auto;"/>
+                 <div class="small text-muted mt-1">Base64 (${attachment.length} chars)</div>
+               </div>`
+            : ''
+        }
       `;
     } catch (error) {
       messageBody.innerHTML = `<p class="text-danger mb-0">Error: ${error.message || 'Tidak dapat memuat pesan.'}</p>`;

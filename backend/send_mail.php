@@ -44,6 +44,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $receiverUsername = $data['receiver_username'] ?? '';
 $encryptedMessage = $data['encrypted_message'] ?? '';
 $encryptedSessionKey = $data['encrypted_session_key'] ?? '';
+$encryptedAttachment = $data['encrypted_attachment'] ?? null;
 $signature = $data['signature'] ?? '';
 
 if (
@@ -72,8 +73,8 @@ $stmt->bind_result($receiverId);
 $stmt->fetch();
 $stmt->close();
 
-$stmt = $conn->prepare("INSERT INTO mails (sender_id, receiver_id, message, session_key, signature) VALUES (?, ?, ?, ?, ?)");
-$stmt->bind_param("iisss", $senderId, $receiverId, $encryptedMessage, $encryptedSessionKey, $signature);
+$stmt = $conn->prepare("INSERT INTO mails (sender_id, receiver_id, message, session_key, attachment, signature) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("iissss", $senderId, $receiverId, $encryptedMessage, $encryptedSessionKey, $encryptedAttachment, $signature);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "Encrypted mail stored successfully."]);

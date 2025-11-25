@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `mails` (
   `receiver_id` int NOT NULL DEFAULT '0',
   `message` text NOT NULL,
   `session_key` text NOT NULL,
+  `attachment` longtext,
   `signature` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_sender_mail` (`sender_id`),
