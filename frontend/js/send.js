@@ -41,14 +41,14 @@
   }
 
   function encryptSessionKey(sessionKey, receiverPublicKey) {
-    const rsa = new JSEncrypt();
+    const rsa = new JSEncrypt({ default_key_size: 2048 });
     rsa.setPublicKey(receiverPublicKey);
     return rsa.encrypt(sessionKey);
   }
 
   function signMessage(message, attachmentBase64, senderPrivateKey) {
     const combined = `${message}||${attachmentBase64 || ''}`;
-    const rsa = new JSEncrypt();
+    const rsa = new JSEncrypt({ default_key_size: 2048 });
     rsa.setPrivateKey(senderPrivateKey);
     return rsa.sign(combined, CryptoJS.SHA256, 'sha256');
   }

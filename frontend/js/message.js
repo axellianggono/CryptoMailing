@@ -25,7 +25,7 @@
   }
 
   const verifySignature = (combined, signature, senderPublicKey) => {
-    const rsa = new JSEncrypt();
+    const rsa = new JSEncrypt({ default_key_size: 2048 });
     rsa.setPublicKey(senderPublicKey);
     return rsa.verify(combined, signature, CryptoJS.SHA256);
   };
@@ -35,7 +35,7 @@
       return { plaintext: '', attachment: '', error: 'Kunci privat tidak ditemukan di perangkat ini.' };
     }
 
-    const rsa = new JSEncrypt();
+    const rsa = new JSEncrypt({ default_key_size: 2048 });
     rsa.setPrivateKey(userPrivateKey);
     const sessionKey = rsa.decrypt(encryptedSessionKey);
 

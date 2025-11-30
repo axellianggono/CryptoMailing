@@ -42,21 +42,21 @@ function encryptMessage(message, sessionKey) {
 }
 
 function encryptSessionKey(sessionKey, receiverPublicKey) {
-    const rsa = new JSEncrypt();
+    const rsa = new JSEncrypt({ default_key_size: 2048 });
     rsa.setPublicKey(receiverPublicKey);
     return rsa.encrypt(sessionKey);
 }
 
 function signCiphertext(ciphertext, senderPrivateKey) {
     const digest = CryptoJS.SHA256(ciphertext).toString();
-    const rsa = new JSEncrypt();
+    const rsa = new JSEncrypt({ default_key_size: 2048 });
     rsa.setPrivateKey(senderPrivateKey);
     return rsa.sign(digest, CryptoJS.SHA256, 'sha256');
 }
 
 function verifySignature(ciphertext, signature, senderPublicKey) {
     const digest = CryptoJS.SHA256(ciphertext).toString();
-    const rsa = new JSEncrypt();
+    const rsa = new JSEncrypt({ default_key_size: 2048 });
     rsa.setPublicKey(senderPublicKey);
     return rsa.verify(digest, signature, CryptoJS.SHA256);
 }
@@ -173,7 +173,7 @@ async function fetchInbox() {
             );
 
             // Dekripsi session key dengan private key penerima
-            const rsa = new JSEncrypt();
+            const rsa = new JSEncrypt({ default_key_size: 2048 });
             rsa.setPrivateKey(privateKey);
             const sessionKey = rsa.decrypt(msg.encrypted_session_key);
 
